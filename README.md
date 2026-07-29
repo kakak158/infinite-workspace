@@ -49,6 +49,12 @@
 
 ---
 
+## AI usage
+
+- AI was used only for bugfixing. All the ideation and most of the programming was made by me! And, no code was pasted into my project without me fully understanding it.
+
+---
+
 ## Soon to come
 
 - Auth with **Clerk**
