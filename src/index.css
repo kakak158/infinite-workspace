@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+/* Makes ContentEditable divs be able to have placeholders */
+div[contenteditable="true"]:empty::before {
+  content: attr(placeholder);
+  color: #aaa;
+  pointer-events: none;
+  display: block;
+}
+
+/* Selection area styling */
+.react-flow__selection {
+  border-radius: 10px;
+}
+
+/* Edge Hover State */
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke: #ffffff !important;
+  stroke-width: 3px !important;
+}
+
+/* Edge Selected State */
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #ffffff !important;
+  stroke-width: 3px !important;
+}
