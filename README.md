@@ -1,23 +1,5 @@
 # Infinite Workspace
 
-Infinite Workspace is an inifinite canvas with drag-and-drop cards that you can use to plan projects, set reminders, and even just relax.
-
-The [Infinite Workspace website](https://infinite-workspace.netlify.app/) is free for all to see.
-
-## Features
-
-### Note Card
-
-The note card is a card that can contain text, and a title. It is an integral part of the experience, as you can use it to express yourself in the canvas. It is also useful in labeling other cards or giving context to, say, the image in the image card
-
-### Image Card
-
-### Parent Card
-
-### Task Card
-
-# Infinite Workspace
-
 **Infinite Workspace** is an interactive, infinite canvas built for organizing ideas, planning projects, tracking tasks, and even relaxing. Drag, drop, connect, and structure your thoughts freely with custom card nodes.
 
 **Live Demo:** [infinite-workspace.netlify.app](https://infinite-workspace.netlify.app/)
