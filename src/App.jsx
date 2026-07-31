@@ -18,7 +18,15 @@ import TaskCard from "./components/TaskCard";
 import LoadingScreen from "./components/LoadingScreen";
 import ParentCard from "./components/ParentCard";
 import ImageCard from "./components/ImageCard";
-import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/react";
+import {
+  Show,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  useUser,
+} from "@clerk/react";
+import supabase from "./supabase-client";
+import { data } from "motion/react-client";
 
 const nodeTypes = {
   note: NoteCard,
@@ -46,38 +54,119 @@ function Flow() {
   const allEdges = useEdges();
   const allNodes = useNodes();
 
-  // Saving
-  const [isLoaded, setIsLoaded] = useState(false);
-  useEffect(() => {
-    try {
-      if (!isLoaded) return;
-      localStorage.setItem("allNodes", JSON.stringify(allNodes));
-      localStorage.setItem("allEdges", JSON.stringify(allEdges));
-    } catch (error) {
-      console.error("Storage full! Image too large for localStorage.", error);
-      alert("Image is too large to save to localStorage!");
-    }
-  }, [allNodes, allEdges]);
+  const { user, isSignedIn } = useUser();
 
+  // // Saving
+  const [isLoaded, setIsLoaded] = useState(false);
+  // useEffect(() => {
+  //   console.log("Save effect ran");
+  //   const saveData = async () => {
+  //     if (!isLoaded) return;
+
+  //     try {
+  //       if (isSignedIn && user) {
+  //         const { data, error } = await supabase.from("UserData").upsert({
+  //           user_id: user.id,
+  //           user_nodes: allNodes,
+  //           user_edges: allEdges,
+  //         });
+
+  //         if (error) {
+  //           console.error("Failed to save user data:", error);
+  //         } else console.log("Saved succesfully via supabase");
+  //       } else {
+  //         localStorage.setItem("allNodes", JSON.stringify(allNodes));
+  //         localStorage.setItem("allEdges", JSON.stringify(allEdges));
+  //       }
+  //     } catch (error) {
+  //       console.error("Storage full! Image too large for localStorage.", error);
+  //       alert(
+  //         "Image is too large to save to localStorage! Sign in to save larger images!",
+  //       );
+  //     }
+  //   };
+
+  //   saveData();
+  // }, [allNodes, allEdges, isLoaded, isSignedIn, user]);
+
+  //Saving
+  const onNodeDragStop = useCallback(
+    (event, node, nodes) => {
+      console.log("Save effect ran");
+      const saveData = async () => {
+        if (!isLoaded) return;
+
+        try {
+          if (isSignedIn && user) {
+            const { data, error } = await supabase.from("UserData").upsert({
+              user_id: user.id,
+              user_nodes: allNodes,
+              user_edges: allEdges,
+            });
+
+            if (error) {
+              console.error("Failed to save user data:", error);
+            } else console.log("Saved succesfully via supabase");
+          } else {
+            localStorage.setItem("allNodes", JSON.stringify(allNodes));
+            localStorage.setItem("allEdges", JSON.stringify(allEdges));
+          }
+        } catch (error) {
+          console.error(
+            "Storage full! Image too large for localStorage.",
+            error,
+          );
+          alert(
+            "Image is too large to save to localStorage! Sign in to save larger images!",
+          );
+        }
+      };
+
+      saveData();
+    },
+    [allNodes, allEdges, isLoaded, isSignedIn, user],
+  );
   // Loading
   useEffect(() => {
-    try {
-      const n = JSON.parse(localStorage.getItem("allNodes"));
-      const e = JSON.parse(localStorage.getItem("allEdges"));
+    console.log("Load effect ran");
+    async function onLoad() {
+      try {
+        if (isSignedIn && user) {
+          const { data, error } = await supabase
+            .from("UserData")
+            .select("*")
+            .eq("user_id", user.id)
+            .single();
 
-      console.log("Loading success!");
+          if (error) {
+            console.error("Loading error: ", error);
+          } else {
+            console.log("Loading Success for Supabase");
+            setNodes(data.user_nodes);
+            setEdges(data.user_edges);
+          }
+        } else {
+          const n = JSON.parse(localStorage.getItem("allNodes"));
+          const e = JSON.parse(localStorage.getItem("allEdges"));
 
-      if (!n) return;
-      if (!e) return;
+          console.log("Loading success!");
 
-      setNodes(n);
-      setEdges(e);
-    } catch (error) {
-      console.error(`An application-crashing error occured: ${error.message}`);
-    } finally {
-      setIsLoaded(true);
+          if (!n) return;
+          if (!e) return;
+
+          setNodes(n);
+          setEdges(e);
+        }
+      } catch (error) {
+        console.error(
+          `An application-crashing error occured: ${error.message}`,
+        );
+      } finally {
+        setIsLoaded(true);
+      }
     }
-  }, []);
+    onLoad();
+  }, [isSignedIn, user]);
 
   // Connects nodes
   const onConnect = useCallback(
@@ -144,6 +233,7 @@ function Flow() {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onNodeDragStop={onNodeDragStop}
         onConnect={onConnect}
         onDragOver={onDragOver} // Dropping onto the canvas
         onDrop={onDrop}
