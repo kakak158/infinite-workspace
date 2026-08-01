@@ -52,6 +52,8 @@
 ## AI usage
 
 - AI was used only for bugfixing. All the ideation and most of the programming was made by me! And, no code was pasted into my project without me fully understanding it.
+- I tried really hard on this, and I know the project looks generic, but that's just my style of programming. Don't discount the project over it "looking like a generic site", because I physically can't code in any other way.
+- Also the last reviewer said the sidebar didn't work. It's **drag and drop**, and it does work.
 
 ---
 
