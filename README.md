@@ -40,12 +40,12 @@
 
 ## Shortcuts & Controls
 
-| Action                         | Shortcut                 |
-| :----------------------------- | :----------------------- |
-| **Bold Text** (Note Card)      | `⌘ + B` / `Ctrl + B`     |
-| **Italicize Text** (Note Card) | `⌘ + I` / `Ctrl + I`     |
-| **Underline Text** (Note Card) | `⌘ + U` / `Ctrl + U`     |
-| **Add Cards**                  | Drag & drop from sidebar |
+| Action                         | Shortcut                     |
+| :----------------------------- | :--------------------------- |
+| **Bold Text** (Note Card)      | `⌘ + B` / `Ctrl + B`         |
+| **Italicize Text** (Note Card) | `⌘ + I` / `Ctrl + I`         |
+| **Underline Text** (Note Card) | `⌘ + U` / `Ctrl + U`         |
+| **Add Cards**                  | **Drag & drop from sidebar** |
 
 ---
 

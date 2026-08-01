@@ -26,7 +26,6 @@ import {
   useUser,
 } from "@clerk/react";
 import supabase from "./supabase-client";
-import { data } from "motion/react-client";
 
 const nodeTypes = {
   note: NoteCard,
@@ -35,138 +34,129 @@ const nodeTypes = {
   image: ImageCard,
 };
 
-const initialNodes = [
-  {
-    id: "n1",
-    position: { x: 0, y: 0 },
-    data: { label: "Node 1" },
-    type: "note",
-  },
-];
+const initialNodes = [];
 
 const initialEdges = [];
 
 function Flow() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const { screenToFlowPosition } = useReactFlow(); // Translates screen coords into canvas coords
+  const { screenToFlowPosition, toObject } = useReactFlow(); // Translates screen coords into canvas coords
   const [viewMiniMap, setViewMiniMap] = useState(false);
   const allEdges = useEdges();
   const allNodes = useNodes();
 
-  const { user, isSignedIn } = useUser();
+  const { user, isSignedIn, isLoaded } = useUser();
 
-  // // Saving
-  const [isLoaded, setIsLoaded] = useState(false);
-  // useEffect(() => {
-  //   console.log("Save effect ran");
-  //   const saveData = async () => {
-  //     if (!isLoaded) return;
+  // Saving
+  const onSave = async () => {
+    const allData = toObject(); // Everything on the canvas: nodes, edges, everything (in JSON)
+    if (!allData) return;
+    if (user && isSignedIn) {
+      // If user exists and is signed in
 
-  //     try {
-  //       if (isSignedIn && user) {
-  //         const { data, error } = await supabase.from("UserData").upsert({
-  //           user_id: user.id,
-  //           user_nodes: allNodes,
-  //           user_edges: allEdges,
-  //         });
-
-  //         if (error) {
-  //           console.error("Failed to save user data:", error);
-  //         } else console.log("Saved succesfully via supabase");
-  //       } else {
-  //         localStorage.setItem("allNodes", JSON.stringify(allNodes));
-  //         localStorage.setItem("allEdges", JSON.stringify(allEdges));
-  //       }
-  //     } catch (error) {
-  //       console.error("Storage full! Image too large for localStorage.", error);
-  //       alert(
-  //         "Image is too large to save to localStorage! Sign in to save larger images!",
-  //       );
-  //     }
-  //   };
-
-  //   saveData();
-  // }, [allNodes, allEdges, isLoaded, isSignedIn, user]);
-
-  //Saving
-  const onNodeDragStop = useCallback(
-    (event, node, nodes) => {
-      console.log("Save effect ran");
-      const saveData = async () => {
-        if (!isLoaded) return;
-
-        try {
-          if (isSignedIn && user) {
-            const { data, error } = await supabase.from("UserData").upsert({
-              user_id: user.id,
-              user_nodes: allNodes,
-              user_edges: allEdges,
-            });
-
-            if (error) {
-              console.error("Failed to save user data:", error);
-            } else console.log("Saved succesfully via supabase");
-          } else {
-            localStorage.setItem("allNodes", JSON.stringify(allNodes));
-            localStorage.setItem("allEdges", JSON.stringify(allEdges));
-          }
-        } catch (error) {
-          console.error(
-            "Storage full! Image too large for localStorage.",
-            error,
-          );
-          alert(
-            "Image is too large to save to localStorage! Sign in to save larger images!",
-          );
-        }
-      };
-
-      saveData();
-    },
-    [allNodes, allEdges, isLoaded, isSignedIn, user],
-  );
-  // Loading
-  useEffect(() => {
-    console.log("Load effect ran");
-    async function onLoad() {
+      // This try block "tries" to send all data to supabase
       try {
-        if (isSignedIn && user) {
-          const { data, error } = await supabase
-            .from("UserData")
-            .select("*")
-            .eq("user_id", user.id)
-            .single();
+        const { data, error } = await supabase
+          .from("UserData")
+          .upsert({ user_id: user.id, all_data: allData })
+          .select();
+        console.log("Success saving to Supabase!");
 
-          if (error) {
-            console.error("Loading error: ", error);
-          } else {
-            console.log("Loading Success for Supabase");
-            setNodes(data.user_nodes);
-            setEdges(data.user_edges);
-          }
-        } else {
-          const n = JSON.parse(localStorage.getItem("allNodes"));
-          const e = JSON.parse(localStorage.getItem("allEdges"));
-
-          console.log("Loading success!");
-
-          if (!n) return;
-          if (!e) return;
-
-          setNodes(n);
-          setEdges(e);
+        if (error) {
+          // Is there a supabase error?
+          console.error("Supabase backend error: ", error);
         }
       } catch (error) {
-        console.error(
-          `An application-crashing error occured: ${error.message}`,
-        );
-      } finally {
-        setIsLoaded(true);
+        // Is there a React error?
+        console.error("Error saving to Supabase: ", error);
+      }
+    } else {
+      // If not signed in, use localStorage
+      try {
+        localStorage.setItem("allData", JSON.stringify(allData));
+        console.log("Success saving to localStorage!");
+      } catch (error) {
+        // Is there a React error?
+        console.error("Error saving to localStorage: ", error);
       }
     }
+  };
+  // Loading
+  const onLoad = async () => {
+    if (user && isSignedIn) {
+      // If user exists and is signed in
+
+      // This try block "tries" to get all data from supabase, make it readable and stick it into the state
+      try {
+        const { data, error } = await supabase
+          .from("UserData")
+          .select("*")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (error) {
+          console.error("Supabase backend error:", error);
+          return;
+        }
+
+        if (!data) {
+          console.log("No saved data found");
+          return;
+        }
+
+        setNodes(data.all_data.nodes ?? []);
+        setEdges(data.all_data.edges ?? []);
+
+        console.log("Success loading from Supabase!");
+      } catch (err) {
+        console.error("Loading failed:", err);
+      }
+    } else {
+      // If not signed in, try to get it from localStorage
+      try {
+        const data = localStorage.getItem("allData");
+
+        if (!data) return;
+
+        const allData = JSON.parse(data);
+        setNodes(allData.nodes);
+        setEdges(allData.edges);
+        console.log("Success loading from localStorage!");
+      } catch (error) {
+        // Is there a React error?
+        console.error("Error saving to localStorage: ", error);
+      }
+    }
+  };
+  // Loading data at start
+  const hasLoaded = useRef(false);
+
+  useEffect(() => {
+    if (!isLoaded || hasLoaded.current) return;
+
+    hasLoaded.current = true;
+
     onLoad();
-  }, [isSignedIn, user]);
+
+    console.log("Tried to load...");
+  }, [isLoaded, isSignedIn, user]);
+
+  // Throttled saving
+  const timedOut = useRef(false);
+
+  useEffect(() => {
+    if (timedOut.current || !hasLoaded.current) return;
+
+    timedOut.current = true;
+
+    onSave();
+    console.log("Tried to save...");
+
+    const timeout = setTimeout(() => {
+      timedOut.current = false;
+    }, 500);
+  }, [allNodes, allEdges]);
 
   // Connects nodes
   const onConnect = useCallback(
@@ -233,7 +223,6 @@ function Flow() {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        onNodeDragStop={onNodeDragStop}
         onConnect={onConnect}
         onDragOver={onDragOver} // Dropping onto the canvas
         onDrop={onDrop}
@@ -252,7 +241,7 @@ function Flow() {
         }}
       >
         {/* Sidebar */}
-        <Panel position="top-right">
+        <Panel position="top-right" className="text-right">
           <Show when="signed-out">
             <SignInButton />
             <SignUpButton />
@@ -260,6 +249,10 @@ function Flow() {
           <Show when="signed-in">
             <UserButton />
           </Show>
+          <p>
+            Warning: signing in will not transfer the current cards in your
+            canvas. They will still be in your localStorage.
+          </p>
         </Panel>
         <Panel position="center-left">
           <div className="flex flex-col items-center gap-2 w-16 h-[60vh] rounded-2xl bg-zinc-900/60 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/40 p-2">
