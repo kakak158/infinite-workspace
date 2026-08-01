@@ -241,18 +241,30 @@ function Flow() {
         }}
       >
         {/* Sidebar */}
-        <Panel position="top-right" className="text-right">
+        <Panel position="top-right">
           <Show when="signed-out">
-            <SignInButton />
-            <SignUpButton />
+            <div className="text-right">
+              <div className="flex gap-4 justify-end">
+                <SignInButton mode="modal">
+                  <button className="p-2 px-6 bg-white rounded-full font-black text-lg italic">
+                    Sign In
+                  </button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <button className="bg-linear-to-r from-indigo-600 to-blue-600 p-2 px-6 rounded-full font-black text-lg italic text-white">
+                    Sign Up
+                  </button>
+                </SignUpButton>
+              </div>
+              <p className="text-red-500 max-w-xs text-xs mt-4">
+                Warning: signing in will not transfer the current cards in your
+                canvas. They will still be in your localStorage.
+              </p>
+            </div>
           </Show>
           <Show when="signed-in">
             <UserButton />
           </Show>
-          <p>
-            Warning: signing in will not transfer the current cards in your
-            canvas. They will still be in your localStorage.
-          </p>
         </Panel>
         <Panel position="center-left">
           <div className="flex flex-col items-center gap-2 w-16 h-[60vh] rounded-2xl bg-zinc-900/60 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/40 p-2">
