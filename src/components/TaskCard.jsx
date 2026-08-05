@@ -57,9 +57,9 @@ const TaskCard = ({ id, data, selected }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
       onAnimationComplete={() => updateNodeInternals(id)}
-      className={`bg-white p-4 w-80 text-black rounded-2xl shadow-2xl shadow-white/20 ${selected && "outline-offset-4 outline-2 outline-white/20"}`}
+      className={`font-spirit bg-white p-4 w-80 text-black rounded-2xl shadow-2xl shadow-white/20 ${selected && "outline-offset-4 outline-2 outline-white/20"}`}
     >
-      <p className="text-gray-400 tracking-widest font-light text-xs mb-2">
+      <p className="text-gray-400 font-sans tracking-widest font-light text-xs mb-2">
         TASKCARD
       </p>
       {/* Actual task part */}
@@ -121,7 +121,7 @@ const TaskCard = ({ id, data, selected }) => {
                 onChange={() => toggleTask(index)}
               />
               <h2
-                className={`font-bold flex-1 ${task.isCompleted && "line-through text-gray-400 font-normal italic"}`}
+                className={`flex-1 ${task.isCompleted && "line-through text-gray-400 font-normal italic"}`}
               >
                 {task.title}
               </h2>

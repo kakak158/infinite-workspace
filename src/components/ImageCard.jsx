@@ -36,9 +36,9 @@ const ImageCard = ({ id, data, selected }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
       onAnimationComplete={() => updateNodeInternals(id)}
-      className={`bg-white p-4 w-80 text-black rounded-2xl shadow-2xl shadow-white/20 relative ${selected && "outline-offset-4 outline-2 outline-white/20"}`}
+      className={`font-spirit bg-white p-4 w-80 text-black rounded-2xl shadow-2xl shadow-white/20 relative ${selected && "outline-offset-4 outline-2 outline-white/20"}`}
     >
-      <p className="text-gray-400 tracking-widest font-light text-xs mb-2">
+      <p className="font-sans text-gray-400 tracking-widest font-light text-xs mb-2">
         IMAGECARD
       </p>
 

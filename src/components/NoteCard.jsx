@@ -35,9 +35,9 @@ const NoteCard = ({ id, data, selected }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
       onAnimationComplete={() => updateNodeInternals(id)}
-      className={`bg-white p-4 w-80 text-black rounded-2xl shadow-2xl shadow-white/20 ${selected && "outline-offset-4 outline-2 outline-white/20"}`}
+      className={`font-spirit bg-white p-4 w-80 text-black rounded-2xl shadow-2xl shadow-white/20 ${selected && "outline-offset-4 outline-2 outline-white/20"}`}
     >
-      <p className="text-gray-400 tracking-widest font-light text-xs mb-2">
+      <p className="font-sans text-gray-400 tracking-widest font-light text-xs mb-2">
         NOTECARD
       </p>
 
@@ -46,7 +46,7 @@ const NoteCard = ({ id, data, selected }) => {
         ref={titleRef}
         contentEditable
         suppressContentEditableWarning
-        className="nodrag nopan text-3xl font-bold w-full rounded-xl px-1 mb-2 focus:outline-gray-400/20 wrap-break-word"
+        className=" nodrag nopan text-3xl font-bold w-full rounded-xl px-1 mb-2 focus:outline-gray-400/20 wrap-break-word"
         placeholder="A bold new title..."
         onInput={handleTitleInput}
       />
@@ -55,7 +55,7 @@ const NoteCard = ({ id, data, selected }) => {
         ref={textRef}
         contentEditable
         suppressContentEditableWarning
-        className="nodrag nopan w-full focus:outline-gray-400/20 wrap-break-word"
+        className=" nodrag nopan w-full focus:outline-gray-400/20 wrap-break-word"
         placeholder="And a beautiful piece of body text..."
         onInput={handleTextInput}
       />

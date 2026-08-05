@@ -123,7 +123,7 @@ export default function ParentCard({ id, data, selected }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
       onAnimationComplete={() => nodeId && updateNodeInternals(nodeId)}
-      className={`relative w-60 h-60 rounded-[3rem] bg-linear-to-br from-emerald-50 via-green-50 to-emerald-100/80 border border-green-200/60 shadow-xl shadow-green-900/10 flex flex-col p-4 select-none ${selected && "outline-offset-4 outline-2 outline-white/20"}`}
+      className={`font-spirit relative w-60 h-60 rounded-[3rem] bg-linear-to-br from-emerald-50 via-green-50 to-emerald-100/80 border border-green-200/60 shadow-xl shadow-green-900/10 flex flex-col p-4 select-none ${selected && "outline-offset-4 outline-2 outline-white/20"}`}
     >
       {/* Floating Editable Title Input */}
       <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-20 w-full min-w-37.5 px-4">

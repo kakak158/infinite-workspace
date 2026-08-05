@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/forms";
 
+@theme {
+  --font-spirit: "new-spirit", serif;
+  --font-spirit-condensed: "new-spirit-condensed", serif;
+  --font-spirit-compressed: "new-spirit-compressed", sans-serif;
+}
 /* Makes ContentEditable divs be able to have placeholders */
 div[contenteditable="true"]:empty::before {
   content: attr(placeholder);
@@ -24,4 +29,19 @@ div[contenteditable="true"]:empty::before {
 .react-flow__edge.selected .react-flow__edge-path {
   stroke: #ffffff !important;
   stroke-width: 3px !important;
+}
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  animation: gradient 8s ease infinite;
 }
